@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
@@ -266,7 +267,7 @@
     </div>
 
     <!-- ============================================ -->
-    <!-- JAVASCRIPT (FIXED)                          -->
+    <!-- JAVASCRIPT (COMPLETELY FIXED)               -->
     <!-- ============================================ -->
     <script>
         // ============================================
@@ -274,9 +275,9 @@
         // ============================================
         const GROQ_API_KEY = '{{ GROQ_API_KEY }}';
         const GROQ_API_URL = '{{ GROQ_API_URL }}';
-        
-        const isProduction = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
-        const flaskApiUrl = isProduction ? '' : 'http://localhost:5000';
+        const flaskApiUrl = '{{ flaskApiUrl }}';
+
+        console.log('Flask API URL:', flaskApiUrl);
 
         // ============================================
         // NAVIGATION
@@ -322,7 +323,43 @@
         document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
 
         // ============================================
-        // FILE UPLOAD
+        // HELPER: Upload image to Flask
+        // ============================================
+        async function uploadImageToFlask(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            // Build the URL
+            const url = flaskApiUrl ? flaskApiUrl + '/' : '/';
+            console.log('Uploading to:', url);
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Upload response:', data);
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                return data;
+            } catch (error) {
+                console.error('Upload error:', error);
+                throw error;
+            }
+        }
+
+        // ============================================
+        // FILE UPLOAD (Main Page)
         // ============================================
         const selectFileBtn = document.getElementById('selectFileBtn');
         const fileInput = document.getElementById('fileInput');
@@ -417,7 +454,7 @@
             if (this.files.length > 0) handleFileUpload(this.files[0]);
         });
 
-        function handleFileUpload(file) {
+        async function handleFileUpload(file) {
             const validTypes = ['image/png', 'image/jpg', 'image/jpeg'];
             if (!validTypes.includes(file.type)) {
                 showModal(`
@@ -439,40 +476,20 @@
             }
 
             showLoadingModal();
-            const formData = new FormData();
-            formData.append('file', file);
             uploadText.innerHTML = '📷 ' + file.name;
 
-            const url = flaskApiUrl ? flaskApiUrl + '/' : '/';
-            fetch(url, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) return response.json().then(err => { throw new Error(err.error || 'Upload failed') });
-                return response.json();
-            })
-            .then(data => {
-                if (data.error) {
-                    showModal(`
-                        <div class="modal-icon">❌</div>
-                        <h2 class="modal-title" style="color: #ef4444;">Error</h2>
-                        <p class="modal-subtitle">${data.error}</p>
-                        <button class="modal-button" onclick="closeModal();">OK</button>
-                    `);
-                    return;
-                }
+            try {
+                const data = await uploadImageToFlask(file);
                 showResultModal(data);
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error('Upload error:', error);
                 showModal(`
                     <div class="modal-icon">⚠️</div>
                     <h2 class="modal-title" style="color: #ef4444;">Connection Error</h2>
-                    <p class="modal-subtitle">${isProduction ? 'Could not connect to the server. Please try again.' : 'Could not connect to the server. Please make sure Flask is running on localhost:5000'}</p>
+                    <p class="modal-subtitle">${error.message || 'Could not connect to the server. Please try again.'}</p>
                     <button class="modal-button" onclick="closeModal();">Try Again</button>
                 `);
-            });
+            }
         }
 
         window.resetUpload = function() {
@@ -521,7 +538,7 @@
         });
 
         // ============================================
-        // CHATBOT WITH GROQ API (FIXED)
+        // CHATBOT
         // ============================================
         const chatbotIcon = document.getElementById('chatbotIcon');
         const chatbotWindow = document.getElementById('chatbotWindow');
@@ -568,10 +585,9 @@ When users ask about symptoms, describe them clearly. When they ask about treatm
         }
 
         // ============================================
-        // FIXED: callGroqAPI with simple truthiness check
+        // GROQ API CALL
         // ============================================
         async function callGroqAPI(message) {
-            // ✅ FIXED: simple truthiness check (no literal comparison)
             if (!GROQ_API_KEY) {
                 throw new Error('Groq API key not configured. Please set GROQ_API_KEY in environment variables.');
             }
@@ -611,11 +627,13 @@ When users ask about symptoms, describe them clearly. When they ask about treatm
             }
         }
 
+        // ============================================
+        // SEND MESSAGE
+        // ============================================
         async function sendMessage() {
             const message = chatbotInput.value.trim();
             if (!message) return;
 
-            // User message
             const userDiv = document.createElement('div');
             userDiv.className = 'message user';
             userDiv.innerHTML = `<div class="message-content">${escapeHtml(message)}</div>`;
@@ -623,7 +641,6 @@ When users ask about symptoms, describe them clearly. When they ask about treatm
             chatbotInput.value = '';
             chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
 
-            // Typing indicator
             const typingDiv = document.createElement('div');
             typingDiv.className = 'message bot';
             typingDiv.id = 'typingIndicator';
@@ -652,8 +669,7 @@ When users ask about symptoms, describe them clearly. When they ask about treatm
                 errDiv.innerHTML = `
                     <div class="message-content" style="text-align: left; background: #fef2f2; border-color: #fecaca; color: #991b1b;">
                         ❌ Sorry, I couldn't process your request.<br>
-                        <small>Error: ${escapeHtml(error.message)}</small><br>
-                        <small>Please check your Groq API configuration.</small>
+                        <small>Error: ${escapeHtml(error.message)}</small>
                     </div>
                 `;
                 chatbotMessages.appendChild(errDiv);
@@ -670,18 +686,18 @@ When users ask about symptoms, describe them clearly. When they ask about treatm
             if (e.key === 'Escape' && chatbotWindow.classList.contains('active')) chatbotWindow.classList.remove('active');
         });
 
-        // Image upload in chatbot
-        chatbotUploadBtn.addEventListener('click', function() { chatbotFileInput.click(); });
-
-        chatbotFileInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) uploadImageToFlask(file);
+        // ============================================
+        // CHATBOT IMAGE UPLOAD (FIXED)
+        // ============================================
+        chatbotUploadBtn.addEventListener('click', function() { 
+            chatbotFileInput.click(); 
         });
 
-        function uploadImageToFlask(file) {
-            const formData = new FormData();
-            formData.append('file', file);
+        chatbotFileInput.addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
 
+            // Show preview
             const reader = new FileReader();
             reader.onload = function(e) {
                 const preview = document.createElement('div');
@@ -691,7 +707,7 @@ When users ask about symptoms, describe them clearly. When they ask about treatm
             };
             reader.readAsDataURL(file);
 
-            // Typing indicator
+            // Show typing indicator
             const typingDiv = document.createElement('div');
             typingDiv.className = 'message bot';
             typingDiv.id = 'typingIndicator';
@@ -703,16 +719,15 @@ When users ask about symptoms, describe them clearly. When they ask about treatm
             chatbotMessages.appendChild(typingDiv);
             chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
 
-            const url = flaskApiUrl ? flaskApiUrl + '/' : '/';
-            fetch(url, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
+            try {
+                // Use the SAME upload function
+                const data = await uploadImageToFlask(file);
+                
                 document.getElementById('typingIndicator')?.remove();
+
                 const botDiv = document.createElement('div');
                 botDiv.className = 'message bot';
+                
                 let emoji = '🌿';
                 const label = data.predicted_label.toLowerCase();
                 if (label.includes('early_blight')) emoji = '🍂';
@@ -723,26 +738,33 @@ When users ask about symptoms, describe them clearly. When they ask about treatm
                     ${emoji} <strong>Disease:</strong> ${data.predicted_label.replace(/_/g, ' ').toUpperCase()}<br>
                     <strong>Confidence:</strong> ${data.confidence}%<br>
                     ${label.includes('healthy') ? '✅ Your potato plant appears healthy!' : '⚠️ Please check the treatment recommendations above.'}`;
+                
                 botDiv.innerHTML = `<div class="message-content" style="text-align: left;">${responseText}</div>`;
                 chatbotMessages.appendChild(botDiv);
                 chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+                
+                // Reset file input
                 chatbotFileInput.value = '';
-            })
-            .catch(error => {
+                
+            } catch (error) {
                 document.getElementById('typingIndicator')?.remove();
-                console.error('Flask API error:', error);
+                console.error('Chatbot upload error:', error);
+                
                 const errDiv = document.createElement('div');
                 errDiv.className = 'message bot';
                 errDiv.innerHTML = `
                     <div class="message-content" style="text-align: left; background: #fef2f2; border-color: #fecaca; color: #991b1b;">
                         ❌ Sorry, I couldn't process the image.<br>
-                        <small>${isProduction ? 'Please try again.' : 'Make sure Flask is running on localhost:5000'}</small>
+                        <small>${escapeHtml(error.message || 'Please try again.')}</small>
                     </div>
                 `;
                 chatbotMessages.appendChild(errDiv);
                 chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-            });
-        }
+                
+                // Reset file input
+                chatbotFileInput.value = '';
+            }
+        });
 
         // Auto-resize textarea
         chatbotInput.addEventListener('input', function() {
