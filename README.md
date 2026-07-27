@@ -2,11 +2,6 @@
 
 A complete, production-ready web application that uses AI to detect potato diseases from leaf photos and provides expert treatment recommendations.
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen)](https://your-app-url.com)
-[![GitHub](https://img.shields.io/badge/GitHub-Repository-blue)](https://github.com/yourusername/potato-detect)
-[![Python](https://img.shields.io/badge/Python-3.9+-blue)](https://python.org)
-[![Flask](https://img.shields.io/badge/Flask-2.3+-lightgrey)](https://flask.palletsprojects.com)
-
 ---
 
 ## 📋 Table of Contents
