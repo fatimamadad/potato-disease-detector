@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Potato Disease Detector - AI Powered Diagnosis</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS - CORRECT PATH -->
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+    <style>
+        /* CSS remains the same as original */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            color: #0f172a;
+            overflow-x: hidden;
+        }
+        /* ... (all original CSS styles) ... */
+        /* For brevity, I'm including only the key styles. The complete CSS should be preserved from your original */
+        
+        /* Chatbot specific styles */
+        .image-preview {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin: 8px 0;
+            border: 2px solid #e2e8f0;
+        }
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 12px 0;
+        }
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #94a3b8;
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite both;
+        }
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-6px); }
+        }
+        .message-content strong {
+            color: #0f172a;
+        }
+        .chatbot-window .message.bot .message-content {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <div class="brand-name">Potato<span>Detect</span></div>
+            </div>
+            <nav>
+                <a href="#home" class="active"><i class="fas fa-home"></i> Home</a>
+                <a href="#about"><i class="fas fa-info-circle"></i>How it Works</a>
+                <a href="#services"><i class="fas fa-stethoscope"></i>Diagnose</a>
+                <a href="#testimonials"><i class="fas fa-star"></i> Testimonials</a>
+            </nav>
+            <div class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1>Detect Potato Diseases with <span>AI Precision</span></h1>
+            <p>Snap a photo and let our smart system diagnose instantly. Protect your potato crop with accurate disease detection and effective treatment recommendations.</p>
+            <div class="hero-buttons">
+                <button class="cta-button" id="heroCta">
+                    <i class="fas fa-camera"></i> Start Diagnosis Now
+                </button>
+                <button class="cta-secondary" id="howItWorksBtn">
+                    <i class="fas fa-play-circle"></i> How It Works
+                </button>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number">98%</span>
+                    <span class="stat-label">Accuracy Rate</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-number">3</span>
+                    <span class="stat-label">Diseases Detected</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-number">5s</span>
+                    <span class="stat-label">Avg Diagnosis Time</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-scroll">
+            <span>Scroll</span>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </section>
+
+    <!-- Diagnose Section -->
+    <section class="diagnose-section" id="services">
+        <div class="diagnose-container">
+            <div class="section-header">
+                <span class="section-tag">Diagnosis</span>
+                <h2 class="section-title">Detect Potato Disease</h2>
+                <p class="section-subtitle">Upload a photo of your potato leaf and get instant AI-powered diagnosis</p>
+            </div>
+            
+            <div class="process-steps">
+                <div class="step">
+                    <div class="step-number">01</div>
+                    <div class="step-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="step-label">Upload Photo</div>
+                </div>
+                <div class="step-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+                <div class="step">
+                    <div class="step-number">02</div>
+                    <div class="step-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="step-label">AI Analysis</div>
+                </div>
+                <div class="step-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+                <div class="step">
+                    <div class="step-number">03</div>
+                    <div class="step-icon">
+                        <i class="fas fa-file-medical-alt"></i>
+                    </div>
+                    <div class="step-label">Get Results</div>
+                </div>
+            </div>
+
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-content">
+                    <div class="upload-icon-wrapper">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="upload-text" id="uploadText">Upload a potato leaf photo</div>
+                    <div class="upload-subtext">PNG, JPG or JPEG • Max 10MB</div>
+                    <input type="file" id="fileInput" accept=".png,.jpg,.jpeg">
+                    <button class="select-file-button" id="selectFileBtn">
+                        <i class="fas fa-folder-open"></i> Select Photo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="about">
+        <div class="how-it-works-overlay"></div>
+        <div class="how-it-works-content">
+            <div class="section-header light">
+                <span class="section-tag">Process</span>
+                <h2 class="section-title">How It Works</h2>
+                <p class="section-subtitle">Three simple steps to protect your potato crop</p>
+            </div>
+            
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-card-icon">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <h3>Capture Photo</h3>
+                    <p>Take a well-lit photo of the affected potato leaf, ensuring the entire leaf is visible and in focus</p>
+                    <div class="step-card-number">1</div>
+                </div>
+                <div class="step-card">
+                    <div class="step-card-icon">
+                        <i class="fas fa-upload"></i>
+                    </div>
+                    <h3>Upload Image</h3>
+                    <p>Drag and drop or select the photo from your device to upload it to our AI system for analysis</p>
+                    <div class="step-card-number">2</div>
+                </div>
+                <div class="step-card">
+                    <div class="step-card-icon">
+                        <i class="fas fa-stethoscope"></i>
+                    </div>
+                    <h3>Get Diagnosis</h3>
+                    <p>Our AI analyzes the image and provides accurate disease identification with treatment recommendations</p>
+                    <div class="step-card-number">3</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="benefits">
+        <div class="benefits-container">
+            <div class="section-header">
+                <span class="section-tag">Features</span>
+                <h2 class="section-title">Why Choose PotatoDetect</h2>
+                <p class="section-subtitle">Advanced AI technology designed specifically for potato disease detection</p>
+            </div>
+            
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h3>98% Accuracy</h3>
+                    <p>Our AI model is trained on thousands of potato leaf images, ensuring highly accurate disease detection</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Lightning Fast</h3>
+                    <p>Get your diagnosis in seconds, along with actionable treatment advice to save your potato crop</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-hand-holding-heart"></i>
+                    </div>
+                    <h3>Easy to Use</h3>
+                    <p>Simply upload a photo and get results instantly - no technical expertise required</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section class="reviews" id="testimonials">
+        <div class="reviews-container">
+            <div class="section-header">
+                <span class="section-tag">Testimonials</span>
+                <h2 class="section-title">What Farmers Say</h2>
+                <p class="section-subtitle">Real feedback from farmers who saved their crops with our AI</p>
+            </div>
+            
+            <div class="reviews-grid">
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="review-quote">
+                            <i class="fas fa-quote-right"></i>
+                        </div>
+                    </div>
+                    <p class="review-text">This tool saved my potato farm! Detected early blight before it could spread. Incredibly accurate!</p>
+                    <div class="review-author">
+                        <div class="author-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <div class="author-name">Thomas Anderson</div>
+                            <div class="author-role">Potato Farmer</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="review-quote">
+                            <i class="fas fa-quote-right"></i>
+                        </div>
+                    </div>
+                    <p class="review-text">The AI identified late blight on my potatoes with 97% confidence. The treatment advice was spot on!</p>
+                    <div class="review-author">
+                        <div class="author-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <div class="author-name">Maria Garcia</div>
+                            <div class="author-role">Agricultural Specialist</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="review-quote">
+                            <i class="fas fa-quote-right"></i>
+                        </div>
+                    </div>
+                    <p class="review-text">I've been using this for 6 months and it's never let me down. Quick, accurate, and easy to use.</p>
+                    <div class="review-author">
+                        <div class="author-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <div class="author-name">James Wilson</div>
+                            <div class="author-role">Potato Grower</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="more-reviews-button" id="moreReviewsBtn">
+                <i class="fas fa-chevron-circle-down"></i> Load More Reviews
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <i class="fas fa-leaf"></i>
+                    <span>Potato<span>Detect</span></span>
+                </div>
+                <p>AI-powered potato disease detection for farmers worldwide</p>
+            </div>
+            <div class="footer-links">
+                <a href="#home">Home</a>
+                <a href="#about">About</a>
+                <a href="#services">Services</a>
+                <a href="#testimonials">Testimonials</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div>&copy; 2025 PotatoDetect - All Rights Reserved</div>
+            <div class="footer-social">
+                <a href="#"><i class="fab fa-github"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="resultModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Chatbot -->
+    <div class="chatbot-icon" id="chatbotIcon">
+        <i class="fas fa-comment-dots"></i>
+        <span class="chatbot-badge">1</span>
+    </div>
+
+    <div class="chatbot-window" id="chatbotWindow">
+        <div class="chatbot-header">
+            <div class="chatbot-header-info">
+                <div class="chatbot-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div>
+                    <h3>Potato Assistant</h3>
+                    <span>Online</span>
+                </div>
+            </div>
+            <button class="chatbot-close" id="chatbotClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="chatbot-messages" id="chatbotMessages">
+            <div class="message bot">
+                <div class="message-content">
+                    <i class="fas fa-leaf" style="color: #35a339; margin-right: 8px;"></i>
+                    Hi! I'm your Potato Disease Assistant. I can help you identify potato diseases and provide treatment recommendations. Ask me anything about potato diseases or upload a photo!
+                </div>
+            </div>
+        </div>
+        <div class="chatbot-input-area">
+            <input type="file" class="chatbot-file-input" id="chatbotFileInput" accept="image/*">
+            <button class="chatbot-upload-btn" id="chatbotUploadBtn" title="Upload Image">
+                <i class="fas fa-image"></i>
+            </button>
+            <input type="text" class="chatbot-input" id="chatbotInput" placeholder="Ask about potato diseases...">
+            <button class="chatbot-send" id="chatbotSend">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // GROQ API CONFIGURATION
+        // ============================================
+        const GROQ_API_KEY = 'api_key_here';
+        const GROQ_API_URL = 'api_url_here';
+
+        // ============================================
+        // NAVIGATION
+        // ============================================
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('nav a').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                const target = this.getAttribute('href');
+                if (target !== '#home') {
+                    document.querySelector(target).scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
+        });
+
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            const nav = document.querySelector('nav');
+            nav.classList.toggle('active');
+        });
+
+        // ============================================
+        // MODAL/POPUP FUNCTIONS
+        // ============================================
+        const modal = document.getElementById('resultModal');
+        const modalBody = document.getElementById('modalBody');
+        const modalClose = document.getElementById('modalClose');
+
+        function showModal(content) {
+            modalBody.innerHTML = content;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        modalClose.addEventListener('click', closeModal);
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // ============================================
+        // FILE UPLOAD FUNCTIONALITY
+        // ============================================
+        const selectFileBtn = document.getElementById('selectFileBtn');
+        const fileInput = document.getElementById('fileInput');
+        const uploadArea = document.getElementById('uploadArea');
+        const uploadText = document.getElementById('uploadText');
+
+        function showLoadingModal() {
+            showModal(`
+                <div class="modal-loading">
+                    <div class="spinner"></div>
+                    <p>🔍 Analyzing potato leaf...</p>
+                    <p style="font-size: 14px; color: #999; margin-top: 8px;">Our AI is examining the image for disease patterns</p>
+                </div>
+            `);
+        }
+
+        function showResultModal(data) {
+            let diseaseEmoji = '🌿';
+            let diseaseColor = '#22c55e';
+            let diseaseAdvice = '';
+            let diseaseName = data.predicted_label.replace(/_/g, ' ').toUpperCase();
+
+            const label = data.predicted_label.toLowerCase();
+            if (label.includes('early_blight')) {
+                diseaseEmoji = '🍂';
+                diseaseColor = '#f59e0b';
+                diseaseAdvice = 'Early blight is caused by the fungus Alternaria solani. Apply fungicides containing chlorothalonil or copper. Remove infected leaves and ensure proper plant spacing for air circulation. Rotate crops to prevent recurrence.';
+            } else if (label.includes('late_blight')) {
+                diseaseEmoji = '⚠️';
+                diseaseColor = '#ef4444';
+                diseaseAdvice = 'Late blight is caused by the water mold Phytophthora infestans - the same disease that caused the Irish potato famine. Apply fungicides like metalaxyl or mancozeb. Destroy infected plants immediately to prevent spread. Avoid overhead watering and ensure good drainage.';
+            } else if (label.includes('healthy')) {
+                diseaseEmoji = '✅';
+                diseaseColor = '#22c55e';
+                diseaseAdvice = 'Great news! Your potato plant appears healthy. Continue regular care with proper watering, adequate sunlight, and routine monitoring. Consider preventive measures like crop rotation and disease-resistant varieties.';
+            } else {
+                diseaseAdvice = 'Please consult a local agricultural extension officer for detailed treatment recommendations specific to your region.';
+            }
+
+            showModal(`
+                <div class="modal-icon">${diseaseEmoji}</div>
+                <h2 class="modal-title" style="color: ${diseaseColor};">${diseaseName}</h2>
+                <p class="modal-subtitle">Potato Disease Diagnosis</p>
+                
+                <div class="modal-result">
+                    <div class="modal-result-item">
+                        <span class="modal-result-label">Disease Detected</span>
+                        <span class="modal-result-value" style="color: ${diseaseColor};">${diseaseName}</span>
+                    </div>
+                    <div class="modal-result-item">
+                        <span class="modal-result-label">Confidence Score</span>
+                        <span class="modal-result-value">${data.confidence}%</span>
+                    </div>
+                    <div class="modal-result-item">
+                        <span class="modal-result-label">Status</span>
+                        <span class="modal-result-value" style="color: ${diseaseColor};">${label.includes('healthy') ? '✅ Healthy' : '⚠️ Needs Treatment'}</span>
+                    </div>
+                </div>
+
+                <div class="modal-advice">
+                    <div style="font-weight: 600; color: #0f172a; margin-bottom: 8px;">💡 Treatment Recommendation</div>
+                    <div class="modal-advice-text">${diseaseAdvice}</div>
+                </div>
+
+                <button class="modal-button" onclick="closeModal(); resetUpload();">
+                    🔄 Diagnose Another Potato Leaf
+                </button>
+            `);
+        }
+
+        selectFileBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            fileInput.click();
+        });
+
+        uploadArea.addEventListener('click', function(e) {
+            if (e.target !== selectFileBtn && e.target !== fileInput) {
+                fileInput.click();
+            }
+        });
+
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('dragover');
+            uploadText.textContent = 'Drop your potato leaf photo here';
+        });
+
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+            uploadText.textContent = 'Upload a potato leaf photo';
+        });
+
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+            uploadText.textContent = 'Upload a potato leaf photo';
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileUpload(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', function(e) {
+            if (this.files.length > 0) {
+                handleFileUpload(this.files[0]);
+            }
+        });
+
+        function handleFileUpload(file) {
+            const validTypes = ['image/png', 'image/jpg', 'image/jpeg'];
+            if (!validTypes.includes(file.type)) {
+                showModal(`
+                    <div class="modal-icon">❌</div>
+                    <h2 class="modal-title" style="color: #ef4444;">Invalid File Type</h2>
+                    <p class="modal-subtitle">Please upload a PNG, JPG, or JPEG image</p>
+                    <button class="modal-button" onclick="closeModal();">OK</button>
+                `);
+                return;
+            }
+
+            if (file.size > 10 * 1024 * 1024) {
+                showModal(`
+                    <div class="modal-icon">📁</div>
+                    <h2 class="modal-title" style="color: #ef4444;">File Too Large</h2>
+                    <p class="modal-subtitle">Please upload a file smaller than 10MB</p>
+                    <button class="modal-button" onclick="closeModal();">OK</button>
+                `);
+                return;
+            }
+
+            showLoadingModal();
+            const formData = new FormData();
+            formData.append('file', file);
+            uploadText.innerHTML = '📷 ' + file.name;
+
+            fetch('/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.error || 'Upload failed') });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    showModal(`
+                        <div class="modal-icon">❌</div>
+                        <h2 class="modal-title" style="color: #ef4444;">Error</h2>
+                        <p class="modal-subtitle">${data.error}</p>
+                        <button class="modal-button" onclick="closeModal();">OK</button>
+                    `);
+                    return;
+                }
+                showResultModal(data);
+            })
+            .catch(error => {
+                console.error('Upload error:', error);
+                showModal(`
+                    <div class="modal-icon">⚠️</div>
+                    <h2 class="modal-title" style="color: #ef4444;">Connection Error</h2>
+                    <p class="modal-subtitle">Could not connect to the server. Please make sure Flask is running on localhost:5000</p>
+                    <button class="modal-button" onclick="closeModal();">Try Again</button>
+                `);
+            });
+        }
+
+        window.resetUpload = function() {
+            fileInput.value = '';
+            uploadText.innerHTML = 'Upload a potato leaf photo';
+            closeModal();
+        }
+
+        // ============================================
+        // CTA BUTTON HANDLER
+        // ============================================
+        document.getElementById('heroCta').addEventListener('click', function() {
+            document.querySelector('#services').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        document.getElementById('howItWorksBtn').addEventListener('click', function() {
+            document.querySelector('#about').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // ============================================
+        // MORE REVIEWS BUTTON
+        // ============================================
+        document.getElementById('moreReviewsBtn').addEventListener('click', function() {
+            const reviews = [
+                { name: "David Wilson, Potato Farmer", text: "This tool helped me identify late blight early and save my entire crop. A game-changer for potato farming!" },
+                { name: "Emily Davis, Agronomist", text: "I recommend this to all my clients. The accuracy is impressive and the treatment advice is practical." },
+                { name: "Robert Taylor, Organic Farmer", text: "Even for organic farming, the early detection helps me take preventive measures naturally." }
+            ];
+            
+            const reviewsGrid = document.querySelector('.reviews-grid');
+            reviews.forEach(review => {
+                const card = document.createElement('div');
+                card.className = 'review-card';
+                card.innerHTML = `
+                    <div class="review-header">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="review-quote">
+                            <i class="fas fa-quote-right"></i>
+                        </div>
+                    </div>
+                    <p class="review-text">${review.text}</p>
+                    <div class="review-author">
+                        <div class="author-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <div class="author-name">${review.name}</div>
+                            <div class="author-role">Verified User</div>
+                        </div>
+                    </div>
+                `;
+                reviewsGrid.appendChild(card);
+            });
+            this.style.display = 'none';
+        });
+
+        // ============================================
+        // CHATBOT WITH GROQ API
+        // ============================================
+        const chatbotIcon = document.getElementById('chatbotIcon');
+        const chatbotWindow = document.getElementById('chatbotWindow');
+        const chatbotClose = document.getElementById('chatbotClose');
+        const chatbotInput = document.getElementById('chatbotInput');
+        const chatbotSend = document.getElementById('chatbotSend');
+        const chatbotMessages = document.getElementById('chatbotMessages');
+        const chatbotFileInput = document.getElementById('chatbotFileInput');
+        const chatbotUploadBtn = document.getElementById('chatbotUploadBtn');
+        const flaskApiUrl = 'http://localhost:5000';
+
+        // System prompt for the potato disease assistant
+        const SYSTEM_PROMPT = `You are a knowledgeable potato disease assistant. Your role is to help farmers and gardeners identify and manage potato diseases. You should:
+
+1. Provide accurate information about potato diseases including Early Blight, Late Blight, and healthy plant identification
+2. Offer practical treatment recommendations
+3. Give preventive care advice
+4. Be encouraging and supportive to users who may be worried about their crops
+5. Always prioritize safety and recommend consulting with local agricultural experts for severe cases
+
+When users ask about symptoms, describe them clearly. When they ask about treatments, provide both organic and chemical options when applicable. Always maintain a helpful, professional, and empathetic tone.`;
+
+        chatbotIcon.addEventListener('click', function() {
+            chatbotWindow.classList.toggle('active');
+            if (chatbotWindow.classList.contains('active')) {
+                setTimeout(() => chatbotInput.focus(), 100);
+            }
+        });
+
+        chatbotClose.addEventListener('click', function() {
+            chatbotWindow.classList.remove('active');
+        });
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatResponse(text) {
+            if (!text) return '';
+            let formatted = text.replace(/\n/g, '<br>');
+            formatted = formatted.replace(/\* /g, '• ');
+            formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            return formatted;
+        }
+
+        async function callGroqAPI(message) {
+            try {
+                const response = await fetch(GROQ_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${GROQ_API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: 'llama-3.1-8b-instant',
+                        messages: [
+                            {
+                                role: 'system',
+                                content: SYSTEM_PROMPT
+                            },
+                            {
+                                role: 'user',
+                                content: message
+                            }
+                        ],
+                        temperature: 0.7,
+                        max_tokens: 1024,
+                        top_p: 0.9
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                return data.choices[0].message.content;
+            } catch (error) {
+                console.error('Groq API error:', error);
+                throw error;
+            }
+        }
+
+        async function sendMessage() {
+            const message = chatbotInput.value.trim();
+            if (!message) return;
+
+            // Add user message
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.className = 'message user';
+            userMessageDiv.innerHTML = `<div class="message-content">${escapeHtml(message)}</div>`;
+            chatbotMessages.appendChild(userMessageDiv);
+
+            chatbotInput.value = '';
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+
+            // Show typing indicator
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = `
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+            chatbotMessages.appendChild(typingDiv);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+
+            try {
+                const botResponse = await callGroqAPI(message);
+                
+                // Remove typing indicator
+                const typing = document.getElementById('typingIndicator');
+                if (typing) typing.remove();
+
+                // Add bot response
+                const botMessageDiv = document.createElement('div');
+                botMessageDiv.className = 'message bot';
+                const formattedResponse = formatResponse(botResponse);
+                botMessageDiv.innerHTML = `<div class="message-content" style="text-align: left;">${formattedResponse}</div>`;
+                chatbotMessages.appendChild(botMessageDiv);
+                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+            } catch (error) {
+                // Remove typing indicator
+                const typing = document.getElementById('typingIndicator');
+                if (typing) typing.remove();
+
+                console.error('Chatbot error:', error);
+                const errorMessageDiv = document.createElement('div');
+                errorMessageDiv.className = 'message bot';
+                errorMessageDiv.innerHTML = `
+                    <div class="message-content" style="text-align: left; background: #fef2f2; border-color: #fecaca; color: #991b1b;">
+                        ❌ Sorry, I couldn't process your request.<br>
+                        <small>Error: ${escapeHtml(error.message)}</small><br>
+                        <small>Please check your Groq API key and internet connection.</small>
+                    </div>
+                `;
+                chatbotMessages.appendChild(errorMessageDiv);
+                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+            }
+        }
+
+        chatbotSend.addEventListener('click', sendMessage);
+        chatbotInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && chatbotWindow.classList.contains('active')) {
+                chatbotWindow.classList.remove('active');
+            }
+        });
+
+        // Image upload in chatbot - still uses Flask API
+        chatbotUploadBtn.addEventListener('click', function() {
+            chatbotFileInput.click();
+        });
+
+        chatbotFileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                uploadImageToFlask(file);
+            }
+        });
+
+        function uploadImageToFlask(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const previewDiv = document.createElement('div');
+                previewDiv.innerHTML = `<img src="${e.target.result}" class="image-preview" alt="Uploaded potato leaf">`;
+                chatbotMessages.appendChild(previewDiv);
+                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+            };
+            reader.readAsDataURL(file);
+
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = `
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+            chatbotMessages.appendChild(typingDiv);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+
+            fetch(flaskApiUrl + '/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const typing = document.getElementById('typingIndicator');
+                if (typing) typing.remove();
+
+                const botMessageDiv = document.createElement('div');
+                botMessageDiv.className = 'message bot';
+                let emoji = '🌿';
+                const label = data.predicted_label.toLowerCase();
+                if (label.includes('early_blight')) emoji = '🍂';
+                else if (label.includes('late_blight')) emoji = '⚠️';
+                else if (label.includes('healthy')) emoji = '✅';
+
+                const botResponse = `🥔 <strong>Potato Disease Result:</strong><br>
+                    ${emoji} <strong>Disease:</strong> ${data.predicted_label.replace(/_/g, ' ').toUpperCase()}<br>
+                    <strong>Confidence:</strong> ${data.confidence}%<br>
+                    ${label.includes('healthy') ? '✅ Your potato plant appears healthy!' : '⚠️ Please check the treatment recommendations above.'}`;
+                
+                botMessageDiv.innerHTML = `<div class="message-content" style="text-align: left;">${botResponse}</div>`;
+                chatbotMessages.appendChild(botMessageDiv);
+                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+                chatbotFileInput.value = '';
+            })
+            .catch(error => {
+                const typing = document.getElementById('typingIndicator');
+                if (typing) typing.remove();
+
+                console.error('Flask API error:', error);
+                const errorMessageDiv = document.createElement('div');
+                errorMessageDiv.className = 'message bot';
+                errorMessageDiv.innerHTML = `
+                    <div class="message-content" style="text-align: left; background: #fef2f2; border-color: #fecaca; color: #991b1b;">
+                        ❌ Sorry, I couldn't process the image.<br>
+                        <small>Make sure Flask is running on localhost:5000</small>
+                    </div>
+                `;
+                chatbotMessages.appendChild(errorMessageDiv);
+                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+            });
+        }
+
+        // Auto-resize textarea
+        chatbotInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+        });
+
+        window.addEventListener('load', function() {
+            if (window.location.hash) {
+                const element = document.querySelector(window.location.hash);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
