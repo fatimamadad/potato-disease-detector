@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify, send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import os
+import base64
 import numpy as np
 from PIL import Image
 from ai_edge_litert.interpreter import Interpreter
@@ -14,10 +15,11 @@ CORS(app)
 # CONFIGURATION
 # ============================================
 IMAGE_SIZE = 224
-UPLOAD_FOLDER = "static"
+UPLOAD_FOLDER = "/tmp"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+# Groq API configuration from environment variables
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
 GROQ_API_URL = os.environ.get("GROQ_API_URL", "")
 
@@ -103,6 +105,7 @@ def serve_assets(filename):
 
 @app.route("/", methods=["GET", "POST"])
 def home():
+    # Handle GET request - render the page with API keys
     if request.method == "GET":
         return render_template(
             "index.html",
@@ -110,6 +113,7 @@ def home():
             GROQ_API_URL=GROQ_API_URL
         )
 
+    # Handle POST request - file upload for disease detection
     if "file" not in request.files:
         return jsonify({"error": "No file uploaded"}), 400
 
@@ -130,11 +134,19 @@ def home():
     if predicted_class is None:
         return jsonify({"error": "Prediction failed"}), 500
 
+    # Encode image as base64 so the frontend can display it
+    # without relying on a persistent file path (Vercel's /tmp is ephemeral)
+    with open(filepath, "rb") as img_file:
+        encoded_image = base64.b64encode(img_file.read()).decode("utf-8")
+
+    ext = filename.rsplit(".", 1)[1].lower()
+    mime_type = "image/png" if ext == "png" else "image/jpeg"
+
     return jsonify({
         "success": True,
         "predicted_label": predicted_class,
         "confidence": confidence,
-        "image_path": filepath
+        "image_data": f"data:{mime_type};base64,{encoded_image}"
     })
 
 @app.route("/health")
