@@ -1,9 +1,0 @@
-{
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "functions": {
-    "api/**/*.py": {
-      "runtime": "python@3.12",
-      "excludeFiles": "{templates/**,static/**,assets/**,models/**,**/*.keras,**/*.h5,**/*.model,__pycache__/**,*.pyc,.venv/**}"
-    }
-  }
-}
