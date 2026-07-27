@@ -2,8 +2,8 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
     "api/**/*.py": {
-      "runtime": "python3.12",
-      "excludeFiles": "{templates/**,static/**,assets/**,models/**,**/*.keras,**/*.h5,**/*.model,.venv/**,__pycache__/**,*.pyc}"
+      "runtime": "python@3.12",
+      "excludeFiles": "{templates/**,static/**,assets/**,models/**,**/*.keras,**/*.h5,**/*.model,__pycache__/**,*.pyc,.venv/**}"
     }
   }
 }
