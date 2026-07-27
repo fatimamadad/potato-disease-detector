@@ -7,6 +7,7 @@ import numpy as np
 from PIL import Image
 from ai_edge_litert.interpreter import Interpreter
 from huggingface_hub import hf_hub_download
+import requests  # ✅ added for chat endpoint
 
 app = Flask(__name__)
 CORS(app)
@@ -70,8 +71,7 @@ def preprocess_image(img_path):
     img = img.resize((IMAGE_SIZE, IMAGE_SIZE))
     img_array = np.array(img, dtype=np.float32)
 
-    # ResNet50-style preprocessing (BGR + mean subtraction), matching
-    # tensorflow.keras.applications.resnet50.preprocess_input
+    # ResNet50-style preprocessing (BGR + mean subtraction)
     img_array = img_array[..., ::-1]  # RGB -> BGR
     mean = [103.939, 116.779, 123.68]
     img_array[..., 0] -= mean[0]
@@ -105,15 +105,15 @@ def serve_assets(filename):
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-    # Handle GET request - render the page with API keys
     if request.method == "GET":
         return render_template(
             "index.html",
             GROQ_API_KEY=GROQ_API_KEY,
-            GROQ_API_URL=GROQ_API_URL
+            GROQ_API_URL=GROQ_API_URL,
+            flaskApiUrl=request.host_url.rstrip('/')  # ✅ pass base URL to frontend
         )
 
-    # Handle POST request - file upload for disease detection
+    # POST: file upload for disease detection
     if "file" not in request.files:
         return jsonify({"error": "No file uploaded"}), 400
 
@@ -134,8 +134,6 @@ def home():
     if predicted_class is None:
         return jsonify({"error": "Prediction failed"}), 500
 
-    # Encode image as base64 so the frontend can display it
-    # without relying on a persistent file path (Vercel's /tmp is ephemeral)
     with open(filepath, "rb") as img_file:
         encoded_image = base64.b64encode(img_file.read()).decode("utf-8")
 
@@ -148,6 +146,51 @@ def home():
         "confidence": confidence,
         "image_data": f"data:{mime_type};base64,{encoded_image}"
     })
+
+# ============================================
+# NEW: CHAT ENDPOINT
+# ============================================
+@app.route("/chat", methods=["POST"])
+def chat():
+    if not GROQ_API_KEY or not GROQ_API_URL:
+        return jsonify({"error": "Groq API not configured on server"}), 500
+
+    data = request.get_json(force=True)
+    user_message = data.get("message", "")
+    if not user_message:
+        return jsonify({"error": "No message provided"}), 400
+
+    system_prompt = (
+        "You are a knowledgeable potato disease assistant. Your role is to help "
+        "farmers and gardeners identify and manage potato diseases. Provide clear, "
+        "actionable advice based on the disease symptoms and prevention methods."
+    )
+
+    try:
+        resp = requests.post(
+            GROQ_API_URL,
+            headers={
+                "Authorization": f"Bearer {GROQ_API_KEY}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "model": "llama-3.1-8b-instant",
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_message}
+                ],
+                "temperature": 0.7,
+                "max_tokens": 1024,
+                "top_p": 0.9
+            },
+            timeout=30
+        )
+        resp.raise_for_status()
+        reply = resp.json()["choices"][0]["message"]["content"]
+        return jsonify({"reply": reply})
+    except requests.exceptions.RequestException as e:
+        print(f"Groq API error: {e}")
+        return jsonify({"error": "Failed to reach Groq API"}), 502
 
 @app.route("/health")
 def health():
