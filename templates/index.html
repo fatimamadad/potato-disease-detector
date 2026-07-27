@@ -249,7 +249,7 @@
         <div class="chatbot-messages" id="chatbotMessages">
             <div class="message bot">
                 <div class="message-content">
-                    <i class="fas fa-leaf" style="color: #35a339; margin-right: 8px;"></i>
+                    <i class="fas fa-leaf" style="color: #22c55e; margin-right: 8px;"></i>
                     Hi! I'm your Potato Disease Assistant. I can help you identify potato diseases and provide treatment recommendations. Ask me anything about potato diseases or upload a photo!
                 </div>
             </div>
@@ -267,17 +267,18 @@
     </div>
 
     <!-- ============================================ -->
-    <!-- JAVASCRIPT (COMPLETELY FIXED)               -->
+    <!-- JAVASCRIPT (FULLY FIXED)                    -->
     <!-- ============================================ -->
     <script>
         // ============================================
-        // GROQ API CONFIGURATION - INJECTED FROM FLASK
+        // CONFIGURATION - INJECTED FROM FLASK
         // ============================================
         const GROQ_API_KEY = '{{ GROQ_API_KEY }}';
         const GROQ_API_URL = '{{ GROQ_API_URL }}';
         const flaskApiUrl = '{{ flaskApiUrl }}';
 
-        console.log('Flask API URL:', flaskApiUrl);
+        console.log('🚀 Flask API URL:', flaskApiUrl);
+        console.log('🔑 Groq API configured:', !!GROQ_API_KEY);
 
         // ============================================
         // NAVIGATION
@@ -329,33 +330,28 @@
             const formData = new FormData();
             formData.append('file', file);
 
-            // Build the URL
-            const url = flaskApiUrl ? flaskApiUrl + '/' : '/';
-            console.log('Uploading to:', url);
+            // Build the URL - works for both local and production
+            const url = flaskApiUrl ? `${flaskApiUrl}/` : '/';
+            console.log('📤 Uploading to:', url);
 
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    body: formData
-                });
+            const response = await fetch(url, {
+                method: 'POST',
+                body: formData
+            });
 
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                console.log('Upload response:', data);
-                
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-                
-                return data;
-            } catch (error) {
-                console.error('Upload error:', error);
-                throw error;
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
             }
+
+            const data = await response.json();
+            console.log('📥 Upload response:', data);
+            
+            if (data.error) {
+                throw new Error(data.error);
+            }
+            
+            return data;
         }
 
         // ============================================
@@ -482,7 +478,7 @@
                 const data = await uploadImageToFlask(file);
                 showResultModal(data);
             } catch (error) {
-                console.error('Upload error:', error);
+                console.error('❌ Upload error:', error);
                 showModal(`
                     <div class="modal-icon">⚠️</div>
                     <h2 class="modal-title" style="color: #ef4444;">Connection Error</h2>
@@ -622,7 +618,7 @@ When users ask about symptoms, describe them clearly. When they ask about treatm
                 const data = await response.json();
                 return data.choices[0].message.content;
             } catch (error) {
-                console.error('Groq API error:', error);
+                console.error('❌ Groq API error:', error);
                 throw error;
             }
         }
@@ -663,7 +659,7 @@ When users ask about symptoms, describe them clearly. When they ask about treatm
                 chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
             } catch (error) {
                 document.getElementById('typingIndicator')?.remove();
-                console.error('Chatbot error:', error);
+                console.error('❌ Chatbot error:', error);
                 const errDiv = document.createElement('div');
                 errDiv.className = 'message bot';
                 errDiv.innerHTML = `
@@ -720,7 +716,7 @@ When users ask about symptoms, describe them clearly. When they ask about treatm
             chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
 
             try {
-                // Use the SAME upload function
+                // Use the SAME upload function as the main page
                 const data = await uploadImageToFlask(file);
                 
                 document.getElementById('typingIndicator')?.remove();
@@ -748,7 +744,7 @@ When users ask about symptoms, describe them clearly. When they ask about treatm
                 
             } catch (error) {
                 document.getElementById('typingIndicator')?.remove();
-                console.error('Chatbot upload error:', error);
+                console.error('❌ Chatbot upload error:', error);
                 
                 const errDiv = document.createElement('div');
                 errDiv.className = 'message bot';
@@ -772,6 +768,7 @@ When users ask about symptoms, describe them clearly. When they ask about treatm
             this.style.height = Math.min(this.scrollHeight, 100) + 'px';
         });
 
+        // Hash navigation on load
         window.addEventListener('load', function() {
             if (window.location.hash) {
                 const el = document.querySelector(window.location.hash);
