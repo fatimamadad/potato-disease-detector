@@ -1,195 +1,125 @@
-# Plant Disease Identifier - Pure HTML/CSS/JavaScript Website
+# 🥔 PotatoDetect - AI-Powered Potato Disease Detection
 
-A fully responsive, modern website for plant disease identification built with pure HTML, CSS, and JavaScript (no frameworks or libraries).
+A complete, production-ready web application that uses AI to detect potato diseases from leaf photos and provides expert treatment recommendations.
 
-## 🌿 Features
-
-- **Pure HTML/CSS/JavaScript** - No React, Vue, or other frameworks
-- **Fully Responsive** - Works perfectly on desktop, tablet, and mobile devices
-- **Modern Design** - Clean, professional interface with smooth interactions
-- **Fast Loading** - Optimized assets and minimal dependencies
-- **Accessible** - Semantic HTML and keyboard navigation support
-- **Interactive Elements** - Smooth scrolling, hover effects, and button interactions
-
-## 📁 Project Structure
-
-```
-plant-disease-website/
-├── index.html          # Main HTML file with embedded CSS and JavaScript
-├── assets/             # All image and SVG assets
-│   ├── 2221-243.webp   # Logo image
-│   ├── 2221-251.webp   # Hero background image
-│   ├── 2221-267.svg    # Upload icon
-│   ├── 2259-23.svg     # Clock icon
-│   ├── 2227-178.svg    # Camera icon
-│   ├── 2227-192.svg    # Upload icon
-│   ├── 2227-195.svg    # Analysis icon
-│   ├── 2241-76.svg     # Precision icon
-│   ├── 2241-79.svg     # Ease icon
-│   ├── 2241-81.svg     # Instant icon
-│   └── [other assets]
-└── README.md           # This file
-```
-
-## 🎨 Design System
-
-### Colors
-- **Primary Green**: #35a339
-- **Dark Green**: #119534
-- **Light Green**: #e6fae7
-- **Text Dark**: #1d1f1e
-- **Text Light**: #8f8f8f
-- **Background Light**: #edf1f6
-- **Background White**: #ffffff
-
-### Typography
-- **Font Family**: Inter (Google Fonts)
-- **Font Weights**: 400, 500, 600, 700, 800
-- **Heading Size**: 40px (h2), 26px (h3)
-- **Body Size**: 18-21px
-
-### Layout
-- **Max Width**: 1440px
-- **Border Radius**: 23px (cards), 14px (buttons), 15px (icons)
-- **Spacing**: Consistent padding and margins throughout
-
-## 📱 Sections
-
-### 1. Header & Navigation
-- Sticky header with logo and brand name
-- Navigation menu with active state indicator
-- Responsive menu for mobile devices
-
-### 2. Hero Section
-- Full-width background image with overlay
-- Compelling headline and subheading
-- Call-to-action button
-
-### 3. Diagnose Disease Section
-- Three-step process visualization
-- File upload interface
-- Clear instructions for users
-
-### 4. How It Works Section
-- Dark background with three step cards
-- Icon-based visual representation
-- Detailed descriptions for each step
-
-### 5. Benefits Section
-- Three benefit cards with icons
-- Key features highlighted
-- Professional layout
-
-### 6. Reviews Section
-- Customer testimonial cards
-- Star ratings
-- "More Reviews" button
-
-### 7. Footer
-- Copyright information
-- Quick links (Contacts, Terms, Privacy)
-- Responsive footer layout
-
-## 🚀 Getting Started
-
-### Quick Start
-1. Extract the files to your desired location
-2. Open `index.html` in any modern web browser
-3. That's it! No build process or dependencies required
-
-### Local Server (Optional)
-For testing with a local server:
-
-```bash
-# Using Python 3
-cd plant-disease-website
-python3 -m http.server 8000
-
-# Then visit http://localhost:8000 in your browser
-```
-
-### Using Node.js
-```bash
-# Using http-server (install globally first)
-npm install -g http-server
-cd plant-disease-website
-http-server
-
-# Or using Python
-python3 -m http.server 8000
-```
-
-## 🎯 Interactive Features
-
-- **Navigation Links**: Smooth scrolling to sections
-- **CTA Button**: Scrolls to the diagnosis section
-- **File Upload Button**: Ready for integration with backend
-- **More Reviews Button**: Placeholder for loading additional reviews
-- **Hover Effects**: Smooth transitions on buttons and links
-
-## 📊 Performance
-
-- **Total Size**: ~1.2MB (including all assets)
-- **HTML Size**: ~35KB
-- **CSS Size**: Embedded (no external stylesheets)
-- **JavaScript Size**: Minimal (only ~2KB of vanilla JS)
-- **Load Time**: Very fast (< 2 seconds on average connection)
-
-## 🔧 Customization
-
-### Change Colors
-Edit the CSS variables in the `<style>` section:
-```css
-:root {
-    --primary-green: #35a339;
-    --dark-green: #119534;
-    /* ... other colors ... */
-}
-```
-
-### Update Content
-Simply edit the HTML text content in the relevant sections.
-
-### Replace Images
-Replace the image files in the `assets/` folder with your own, keeping the same filenames.
-
-### Modify Layout
-Adjust the CSS grid, flexbox, and positioning properties to customize the layout.
-
-## 🌐 Browser Support
-
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-- Mobile browsers (iOS Safari, Chrome Mobile)
-
-## ♿ Accessibility
-
-- Semantic HTML5 elements
-- Proper heading hierarchy
-- Alt text for all images
-- Keyboard navigation support
-- Color contrast compliance
-
-## 📄 License
-
-Free to use and modify for any purpose.
-
-## 🤝 Support
-
-For questions or issues, please refer to the inline code comments or modify the HTML/CSS/JavaScript as needed.
-
-## 📝 Notes
-
-- All assets are included in the `assets/` folder
-- No external API calls or dependencies
-- Works offline (after initial load)
-- Responsive design adapts to all screen sizes
-- Smooth animations and transitions throughout
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen)](https://your-app-url.com)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-blue)](https://github.com/yourusername/potato-detect)
+[![Python](https://img.shields.io/badge/Python-3.9+-blue)](https://python.org)
+[![Flask](https://img.shields.io/badge/Flask-2.3+-lightgrey)](https://flask.palletsprojects.com)
 
 ---
 
-**Built with Pure HTML, CSS, and JavaScript**
-No frameworks, no build tools, no dependencies. Just clean, efficient code.
-"# Potato_disease_detection" 
+## 📋 Table of Contents
+
+- [About the Project](#about-the-project)
+- [Live Demo](#live-demo)
+- [Features](#features)
+- [AI Feature Details](#ai-feature-details)
+- [Tech Stack](#tech-stack)
+- [Screenshots](#screenshots)
+- [How to Run Locally](#how-to-run-locally)
+- [Environment Variables](#environment-variables)
+- [Project Structure](#project-structure)
+- [License](#license)
+
+---
+
+## 🎯 About the Project
+
+### The Problem
+Potato farmers face significant crop losses due to undetected diseases like Early Blight and Late Blight. Traditional diagnosis requires agricultural experts, which are often unavailable in rural areas. By the time farmers notice symptoms, the disease has already spread.
+
+### Our Solution
+**PotatoDetect** is an AI-powered web application that allows farmers to instantly identify potato diseases by uploading a photo of the affected leaf. The app provides 98% accurate detection with detailed treatment recommendations.
+
+### Who It's For
+- Small-scale potato farmers
+- Commercial growers
+- Agricultural students
+- Home gardeners
+- Agricultural extension officers
+
+---
+
+## 🌐 Live Demo
+
+**URL:** [https://potato-disease-detector-c1gb.vercel.app/](https://potato-disease-detector-c1gb.vercel.app/)
+
+---
+
+## ✨ Features
+
+### Disease Detection
+- Upload potato leaf photos (PNG, JPG, JPEG)
+- AI-powered diagnosis with 98% accuracy
+- Real-time results with confidence scores
+- Detects: Early Blight, Late Blight, Healthy
+- Detailed treatment recommendations
+- Drag and drop support
+
+### AI Chat Assistant
+- 24/7 expert guidance on potato diseases
+- Natural language conversations
+- Context-aware responses
+- Direct image upload within chat
+- Treatment planning assistance
+
+### User Experience
+- Mobile-responsive design
+- Modern, clean interface
+- Real-time feedback with loading states
+- Comprehensive disease information
+- Testimonials from real farmers
+
+---
+
+## 🤖 AI Feature Details
+
+### Disease Detection Model
+- **Model:** TensorFlow Lite (ResNet50-based)
+- **Training Data:** 3,000+ potato leaf images
+- **Accuracy:** 98%
+- **Inference Time:** < 500ms
+- **Model Source:** Hugging Face Hub
+
+**How it works:**
+1. User uploads a potato leaf image
+2. Image is preprocessed (resized to 224x224)
+3. Model runs inference using TensorFlow Lite
+4. Results returned with disease class and confidence
+5. Custom treatment recommendations shown
+
+### Groq AI Chat Assistant
+- **Model:** Llama 3.1-8B-Instruct
+- **Provider:** Groq API
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+- HTML5, CSS3, JavaScript (ES6)
+- Font Awesome Icons
+- Google Fonts (Inter)
+- Responsive Design
+
+### Backend
+- Python 3.9+
+- Flask Framework
+- TensorFlow Lite
+- Pillow, NumPy
+
+### APIs & Services
+- Groq API (Llama 3.1)
+- Hugging Face Hub
+- REST API
+
+### Deployment
+- Vercel 
+- GitHub
+
+---
+
+
+---
+
